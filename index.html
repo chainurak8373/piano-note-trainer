@@ -2,57 +2,70 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Piano Note Trainer v2</title>
+  <title>Piano Trainer v3-4-5</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <main class="app">
-    <h1>🎹 Piano Note Trainer v2</h1>
-    <p class="subtitle">ฝึกกดโน้ตเปียโนให้ตรงกับโจทย์</p>
+<main class="app">
+  <h1>🎹 Piano Trainer v3-4-5</h1>
+  <p>ฝึกเปียโนด้วยคีย์บอร์ดคอมพิวเตอร์, MIDI Keyboard และไมโครโฟน</p>
 
-    <section class="card">
-      <div class="label">โน้ตที่ต้องกด</div>
-      <div id="noteDisplay">C</div>
+  <section class="card">
+    <h2>โน้ตที่ต้องเล่น</h2>
+    <div id="noteDisplay">C</div>
 
-      <div id="result">เริ่มฝึกได้เลย</div>
+    <div class="staff">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div id="noteSymbol">●</div>
+    </div>
 
-      <div class="score-box">
-        คะแนน: <span id="score">0</span>
-        |
-        ผิด: <span id="wrong">0</span>
-      </div>
+    <div id="result">พร้อมเริ่มฝึก</div>
 
-      <button id="newBtn">สุ่มโน้ตใหม่</button>
-    </section>
+    <div class="score">
+      คะแนน: <span id="score">0</span>
+      |
+      ผิด: <span id="wrong">0</span>
+    </div>
 
-    <section class="piano">
-      <div class="white-key" data-note="C">C<br><small>A</small></div>
-      <div class="black-key cs" data-note="C#">C#</div>
+    <button onclick="newNote()">สุ่มโน้ตใหม่</button>
+    <button onclick="connectMIDI()">เชื่อมต่อ MIDI Keyboard</button>
+    <button onclick="startMic()">เปิดไมโครโฟน</button>
 
-      <div class="white-key" data-note="D">D<br><small>S</small></div>
-      <div class="black-key ds" data-note="D#">D#</div>
+    <p id="midiStatus">MIDI: ยังไม่ได้เชื่อมต่อ</p>
+    <p id="micStatus">Mic: ยังไม่ได้เปิด</p>
+  </section>
 
-      <div class="white-key" data-note="E">E<br><small>D</small></div>
+  <section class="piano">
+    <div class="white-key" data-note="C">C<br><small>A</small></div>
+    <div class="black-key cs" data-note="C#">C#</div>
 
-      <div class="white-key" data-note="F">F<br><small>F</small></div>
-      <div class="black-key fs" data-note="F#">F#</div>
+    <div class="white-key" data-note="D">D<br><small>S</small></div>
+    <div class="black-key ds" data-note="D#">D#</div>
 
-      <div class="white-key" data-note="G">G<br><small>G</small></div>
-      <div class="black-key gs" data-note="G#">G#</div>
+    <div class="white-key" data-note="E">E<br><small>D</small></div>
 
-      <div class="white-key" data-note="A">A<br><small>H</small></div>
-      <div class="black-key as" data-note="A#">A#</div>
+    <div class="white-key" data-note="F">F<br><small>F</small></div>
+    <div class="black-key fs" data-note="F#">F#</div>
 
-      <div class="white-key" data-note="B">B<br><small>J</small></div>
-    </section>
+    <div class="white-key" data-note="G">G<br><small>G</small></div>
+    <div class="black-key gs" data-note="G#">G#</div>
 
-    <p class="hint">
-      ใช้คีย์บอร์ด: A S D F G H J สำหรับ C D E F G A B
-    </p>
-  </main>
+    <div class="white-key" data-note="A">A<br><small>H</small></div>
+    <div class="black-key as" data-note="A#">A#</div>
 
-  <script src="script.js"></script>
+    <div class="white-key" data-note="B">B<br><small>J</small></div>
+  </section>
+
+  <p class="hint">
+    คีย์บอร์ดคอมพิวเตอร์: A S D F G H J = C D E F G A B
+  </p>
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
