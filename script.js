@@ -1,29 +1,19 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
   font-family: Arial, Tahoma, sans-serif;
-  background: linear-gradient(135deg, #eef6ff, #ffffff);
-  color: #222;
+  background: #f1f7ff;
   text-align: center;
+  color: #222;
 }
 
 .app {
-  max-width: 900px;
+  max-width: 950px;
   margin: auto;
-  padding: 24px;
+  padding: 20px;
 }
 
 h1 {
-  margin-bottom: 5px;
   font-size: 36px;
-}
-
-.subtitle {
-  color: #555;
-  margin-bottom: 20px;
 }
 
 .card {
@@ -31,47 +21,64 @@ h1 {
   border-radius: 20px;
   padding: 25px;
   margin: 20px auto;
-  max-width: 500px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-}
-
-.label {
-  font-size: 18px;
-  color: #666;
+  max-width: 600px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 #noteDisplay {
-  font-size: 110px;
+  font-size: 100px;
   font-weight: bold;
   color: #1976d2;
-  margin: 10px 0;
 }
 
 #result {
   font-size: 28px;
+  margin: 15px;
   min-height: 40px;
-  margin: 12px 0;
 }
 
-.score-box {
+.score {
   font-size: 22px;
-  margin: 15px 0;
+  margin: 15px;
 }
 
-#newBtn {
-  padding: 12px 24px;
-  font-size: 18px;
+button {
+  margin: 6px;
+  padding: 12px 18px;
+  font-size: 16px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #1976d2;
   color: white;
   cursor: pointer;
 }
 
-#newBtn:hover {
+button:hover {
   background: #0d47a1;
 }
 
+/* Staff */
+.staff {
+  position: relative;
+  width: 280px;
+  height: 120px;
+  margin: 20px auto;
+}
+
+.line {
+  height: 2px;
+  background: #222;
+  margin: 18px 0;
+}
+
+#noteSymbol {
+  position: absolute;
+  left: 130px;
+  font-size: 42px;
+  color: #111;
+}
+
+/* Piano */
 .piano {
   position: relative;
   display: flex;
@@ -93,7 +100,6 @@ h1 {
   user-select: none;
 }
 
-.white-key:active,
 .white-key.active {
   background: #bbdefb;
 }
@@ -112,7 +118,6 @@ h1 {
   user-select: none;
 }
 
-.black-key:active,
 .black-key.active {
   background: #555;
 }
@@ -125,9 +130,4 @@ h1 {
 
 .hint {
   color: #666;
-  font-size: 16px;
-}
-
-small {
-  color: #777;
 }
