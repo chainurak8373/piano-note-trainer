@@ -1,1 +1,37 @@
+const notes = ["C","D","E","F","G","A","B"];
 
+let currentNote = "";
+let score = 0;
+
+function newNote(){
+
+    currentNote =
+        notes[Math.floor(Math.random()*notes.length)];
+
+    document.getElementById("noteDisplay").innerHTML =
+        currentNote;
+}
+
+function checkAnswer(note){
+
+    if(note === currentNote){
+
+        document.getElementById("result").innerHTML =
+            "✅ ถูกต้อง";
+
+        score++;
+
+        document.getElementById("score").innerHTML =
+            score;
+
+    }else{
+
+        document.getElementById("result").innerHTML =
+            "❌ ผิด";
+
+    }
+
+    newNote();
+}
+
+newNote();
