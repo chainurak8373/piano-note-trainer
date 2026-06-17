@@ -1,37 +1,106 @@
-const notes = ["C","D","E","F","G","A","B"];
+const notes = ["C", "D", "E", "F", "G", "A", "B"];
 
 let currentNote = "";
 let score = 0;
+let wrong = 0;
 
-function newNote(){
+const noteDisplay = document.getElementById("noteDisplay");
+const result = document.getElementById("result");
+const scoreText = document.getElementById("score");
+const wrongText = document.getElementById("wrong");
+const newBtn = document.getElementById("newBtn");
 
-    currentNote =
-        notes[Math.floor(Math.random()*notes.length)];
+const keyMap = {
+  "a": "C",
+  "s": "D",
+  "d": "E",
+  "f": "F",
+  "g": "G",
+  "h": "A",
+  "j": "B"
+};
 
-    document.getElementById("noteDisplay").innerHTML =
-        currentNote;
+const frequencies = {
+  "C": 261.63,
+  "C#": 277.18,
+  "D": 293.66,
+  "D#": 311.13,
+  "E": 329.63,
+  "F": 349.23,
+  "F#": 369.99,
+  "G": 392.00,
+  "G#": 415.30,
+  "A": 440.00,
+  "A#": 466.16,
+  "B": 493.88
+};
+
+function newNote() {
+  currentNote = notes[Math.floor(Math.random() * notes.length)];
+  noteDisplay.textContent = currentNote;
 }
 
-function checkAnswer(note){
+function playSound(note) {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
 
-    if(note === currentNote){
+  osc.type = "sine";
+  osc.frequency.value = frequencies[note];
 
-        document.getElementById("result").innerHTML =
-            "✅ ถูกต้อง";
+  gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
 
-        score++;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
 
-        document.getElementById("score").innerHTML =
-            score;
-
-    }else{
-
-        document.getElementById("result").innerHTML =
-            "❌ ผิด";
-
-    }
-
-    newNote();
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.6);
 }
+
+function flashKey(note) {
+  const key = document.querySelector(`[data-note="${note}"]`);
+  if (!key) return;
+
+  key.classList.add("active");
+  setTimeout(() => key.classList.remove("active"), 200);
+}
+
+function checkAnswer(note) {
+  playSound(note);
+  flashKey(note);
+
+  if (note === currentNote) {
+    score++;
+    result.textContent = "✅ ถูกต้อง เก่งมาก!";
+    result.style.color = "green";
+    scoreText.textContent = score;
+    setTimeout(newNote, 500);
+  } else {
+    wrong++;
+    result.textContent = `❌ ผิด ลองใหม่อีกครั้ง`;
+    result.style.color = "red";
+    wrongText.textContent = wrong;
+  }
+}
+
+document.querySelectorAll("[data-note]").forEach(key => {
+  key.addEventListener("click", () => {
+    checkAnswer(key.dataset.note);
+  });
+});
+
+document.addEventListener("keydown", (event) => {
+  const key = event.key.toLowerCase();
+  if (keyMap[key]) {
+    checkAnswer(keyMap[key]);
+  }
+});
+
+newBtn.addEventListener("click", () => {
+  result.textContent = "สุ่มโน้ตใหม่แล้ว";
+  result.style.color = "#333";
+  newNote();
+});
 
 newNote();
