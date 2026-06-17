@@ -1,1 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano Note Trainer</title>
 
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>🎹 Piano Note Trainer</h1>
+
+        <p>กดปุ่มบนคีย์บอร์ดให้ตรงกับโน้ตที่กำหนด</p>
+
+        <div id="noteDisplay">
+            C
+        </div>
+
+        <div class="keys">
+            <button onclick="checkAnswer('C')">C</button>
+            <button onclick="checkAnswer('D')">D</button>
+            <button onclick="checkAnswer('E')">E</button>
+            <button onclick="checkAnswer('F')">F</button>
+            <button onclick="checkAnswer('G')">G</button>
+            <button onclick="checkAnswer('A')">A</button>
+            <button onclick="checkAnswer('B')">B</button>
+        </div>
+
+        <div id="result"></div>
+
+        <div class="score">
+            คะแนน : <span id="score">0</span>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
