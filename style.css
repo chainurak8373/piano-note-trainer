@@ -3,12 +3,15 @@ const notes = ["C", "D", "E", "F", "G", "A", "B"];
 let currentNote = "";
 let score = 0;
 let wrong = 0;
+let lastMicNote = "";
 
 const noteDisplay = document.getElementById("noteDisplay");
+const noteSymbol = document.getElementById("noteSymbol");
 const result = document.getElementById("result");
 const scoreText = document.getElementById("score");
 const wrongText = document.getElementById("wrong");
-const newBtn = document.getElementById("newBtn");
+const midiStatus = document.getElementById("midiStatus");
+const micStatus = document.getElementById("micStatus");
 
 const keyMap = {
   "a": "C",
@@ -18,6 +21,32 @@ const keyMap = {
   "g": "G",
   "h": "A",
   "j": "B"
+};
+
+const notePositions = {
+  "C": 82,
+  "D": 73,
+  "E": 64,
+  "F": 55,
+  "G": 46,
+  "A": 37,
+  "B": 28
+};
+
+const midiNoteMap = {
+  60: "C",
+  61: "C#",
+  62: "D",
+  63: "D#",
+  64: "E",
+  65: "F",
+  66: "F#",
+  67: "G",
+  68: "G#",
+  69: "A",
+  70: "A#",
+  71: "B",
+  72: "C"
 };
 
 const frequencies = {
@@ -38,6 +67,9 @@ const frequencies = {
 function newNote() {
   currentNote = notes[Math.floor(Math.random() * notes.length)];
   noteDisplay.textContent = currentNote;
+  noteSymbol.style.top = notePositions[currentNote] + "px";
+  result.textContent = "เล่นโน้ต " + currentNote;
+  result.style.color = "#333";
 }
 
 function playSound(note) {
@@ -46,16 +78,16 @@ function playSound(note) {
   const gain = audioCtx.createGain();
 
   osc.type = "sine";
-  osc.frequency.value = frequencies[note];
+  osc.frequency.value = frequencies[note] || 440;
 
   gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
 
   osc.connect(gain);
   gain.connect(audioCtx.destination);
 
   osc.start();
-  osc.stop(audioCtx.currentTime + 0.6);
+  osc.stop(audioCtx.currentTime + 0.5);
 }
 
 function flashKey(note) {
@@ -70,37 +102,189 @@ function checkAnswer(note) {
   playSound(note);
   flashKey(note);
 
-  if (note === currentNote) {
+  const simpleNote = note.replace("#", "");
+
+  if (simpleNote === currentNote) {
     score++;
-    result.textContent = "✅ ถูกต้อง เก่งมาก!";
-    result.style.color = "green";
     scoreText.textContent = score;
-    setTimeout(newNote, 500);
+    result.textContent = "✅ ถูกต้อง";
+    result.style.color = "green";
+    setTimeout(newNote, 600);
   } else {
     wrong++;
-    result.textContent = `❌ ผิด ลองใหม่อีกครั้ง`;
-    result.style.color = "red";
     wrongText.textContent = wrong;
+    result.textContent = "❌ ผิด คุณเล่น " + note;
+    result.style.color = "red";
   }
 }
 
+/* Mouse */
 document.querySelectorAll("[data-note]").forEach(key => {
   key.addEventListener("click", () => {
     checkAnswer(key.dataset.note);
   });
 });
 
-document.addEventListener("keydown", (event) => {
+/* Computer Keyboard */
+document.addEventListener("keydown", event => {
   const key = event.key.toLowerCase();
   if (keyMap[key]) {
     checkAnswer(keyMap[key]);
   }
 });
 
-newBtn.addEventListener("click", () => {
-  result.textContent = "สุ่มโน้ตใหม่แล้ว";
-  result.style.color = "#333";
-  newNote();
-});
+/* MIDI Keyboard */
+function connectMIDI() {
+  if (!navigator.requestMIDIAccess) {
+    midiStatus.textContent = "MIDI: เบราว์เซอร์นี้ยังไม่รองรับ Web MIDI";
+    return;
+  }
+
+  navigator.requestMIDIAccess()
+    .then(midiAccess => {
+      midiStatus.textContent = "MIDI: เชื่อมต่อแล้ว";
+
+      for (let input of midiAccess.inputs.values()) {
+        input.onmidimessage = handleMIDIMessage;
+      }
+    })
+    .catch(() => {
+      midiStatus.textContent = "MIDI: เชื่อมต่อไม่สำเร็จ";
+    });
+}
+
+function handleMIDIMessage(message) {
+  const command = message.data[0];
+  const noteNumber = message.data[1];
+  const velocity = message.data[2];
+
+  if (command === 144 && velocity > 0) {
+    const note = midiNoteMap[noteNumber];
+
+    if (note) {
+      checkAnswer(note);
+    }
+  }
+}
+
+/* Microphone Pitch Detection */
+async function startMic() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(stream);
+    const analyser = audioCtx.createAnalyser();
+
+    analyser.fftSize = 2048;
+    source.connect(analyser);
+
+    const buffer = new Float32Array(analyser.fftSize);
+
+    micStatus.textContent = "Mic: เปิดแล้ว กำลังฟังเสียง";
+
+    function detect() {
+      analyser.getFloatTimeDomainData(buffer);
+
+      const pitch = autoCorrelate(buffer, audioCtx.sampleRate);
+
+      if (pitch !== -1) {
+        const note = frequencyToNote(pitch);
+
+        if (note && note !== lastMicNote) {
+          lastMicNote = note;
+          micStatus.textContent = "Mic: ได้ยินโน้ต " + note;
+          checkAnswer(note);
+        }
+      }
+
+      requestAnimationFrame(detect);
+    }
+
+    detect();
+
+  } catch (error) {
+    micStatus.textContent = "Mic: เปิดไมโครโฟนไม่สำเร็จ";
+  }
+}
+
+function frequencyToNote(freq) {
+  let closestNote = null;
+  let minDiff = Infinity;
+
+  for (const note in frequencies) {
+    const diff = Math.abs(freq - frequencies[note]);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestNote = note;
+    }
+  }
+
+  if (minDiff < 20) {
+    return closestNote;
+  }
+
+  return null;
+}
+
+function autoCorrelate(buffer, sampleRate) {
+  let size = buffer.length;
+  let rms = 0;
+
+  for (let i = 0; i < size; i++) {
+    rms += buffer[i] * buffer[i];
+  }
+
+  rms = Math.sqrt(rms / size);
+
+  if (rms < 0.02) return -1;
+
+  let r1 = 0;
+  let r2 = size - 1;
+
+  for (let i = 0; i < size / 2; i++) {
+    if (Math.abs(buffer[i]) < 0.2) {
+      r1 = i;
+      break;
+    }
+  }
+
+  for (let i = 1; i < size / 2; i++) {
+    if (Math.abs(buffer[size - i]) < 0.2) {
+      r2 = size - i;
+      break;
+    }
+  }
+
+  buffer = buffer.slice(r1, r2);
+  size = buffer.length;
+
+  const correlations = new Array(size).fill(0);
+
+  for (let lag = 0; lag < size; lag++) {
+    for (let i = 0; i < size - lag; i++) {
+      correlations[lag] += buffer[i] * buffer[i + lag];
+    }
+  }
+
+  let d = 0;
+  while (correlations[d] > correlations[d + 1]) {
+    d++;
+  }
+
+  let maxValue = -1;
+  let maxPosition = -1;
+
+  for (let i = d; i < size; i++) {
+    if (correlations[i] > maxValue) {
+      maxValue = correlations[i];
+      maxPosition = i;
+    }
+  }
+
+  if (maxPosition === -1) return -1;
+
+  return sampleRate / maxPosition;
+}
 
 newNote();
