@@ -1,44 +1,133 @@
-body{
-    font-family: Arial, sans-serif;
-    background:#f4f7fb;
-    text-align:center;
+* {
+  box-sizing: border-box;
 }
 
-.container{
-    max-width:800px;
-    margin:auto;
-    padding:30px;
+body {
+  margin: 0;
+  font-family: Arial, Tahoma, sans-serif;
+  background: linear-gradient(135deg, #eef6ff, #ffffff);
+  color: #222;
+  text-align: center;
 }
 
-h1{
-    color:#333;
+.app {
+  max-width: 900px;
+  margin: auto;
+  padding: 24px;
 }
 
-#noteDisplay{
-    font-size:120px;
-    font-weight:bold;
-    margin:30px;
-    color:#2196F3;
+h1 {
+  margin-bottom: 5px;
+  font-size: 36px;
 }
 
-.keys{
-    margin:20px;
+.subtitle {
+  color: #555;
+  margin-bottom: 20px;
 }
 
-.keys button{
-    width:80px;
-    height:80px;
-    margin:5px;
-    font-size:24px;
-    cursor:pointer;
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  margin: 20px auto;
+  max-width: 500px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
-#result{
-    font-size:32px;
-    margin-top:20px;
+.label {
+  font-size: 18px;
+  color: #666;
 }
 
-.score{
-    font-size:28px;
-    margin-top:20px;
+#noteDisplay {
+  font-size: 110px;
+  font-weight: bold;
+  color: #1976d2;
+  margin: 10px 0;
+}
+
+#result {
+  font-size: 28px;
+  min-height: 40px;
+  margin: 12px 0;
+}
+
+.score-box {
+  font-size: 22px;
+  margin: 15px 0;
+}
+
+#newBtn {
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+}
+
+#newBtn:hover {
+  background: #0d47a1;
+}
+
+.piano {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 35px auto 10px;
+  max-width: 720px;
+  height: 230px;
+}
+
+.white-key {
+  width: 90px;
+  height: 220px;
+  background: white;
+  border: 2px solid #222;
+  border-radius: 0 0 10px 10px;
+  padding-top: 150px;
+  font-size: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.white-key:active,
+.white-key.active {
+  background: #bbdefb;
+}
+
+.black-key {
+  position: absolute;
+  width: 55px;
+  height: 135px;
+  background: #111;
+  color: white;
+  border-radius: 0 0 8px 8px;
+  padding-top: 85px;
+  font-size: 15px;
+  z-index: 2;
+  cursor: pointer;
+  user-select: none;
+}
+
+.black-key:active,
+.black-key.active {
+  background: #555;
+}
+
+.cs { left: calc(50% - 270px + 62px); }
+.ds { left: calc(50% - 270px + 152px); }
+.fs { left: calc(50% - 270px + 332px); }
+.gs { left: calc(50% - 270px + 422px); }
+.as { left: calc(50% - 270px + 512px); }
+
+.hint {
+  color: #666;
+  font-size: 16px;
+}
+
+small {
+  color: #777;
 }
